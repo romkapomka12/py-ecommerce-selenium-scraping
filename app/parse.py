@@ -75,7 +75,6 @@ def parse_simple_product(product: Tag) -> Product:
         price=float(product.select_one(".pull-right").text.replace("$", "")),
         num_of_reviews=num_of_reviews,
         rating=rating,
-        # additional_info={"hdd_prices": hdd_prices},
     )
 
 
@@ -141,22 +140,21 @@ def get_all_products() -> None:
         {"name": "touch", "url": TOUCH_URL},
     ]
 
-    with webdriver.Chrome() as driver:
-        set_driver(driver)
-
-        for page in pages:
-            print(f"Processing category: {page['name']} with URL: {page['url']}")
-            try:
-                products = get_all_products_from_category(page["url"])
-                filename = f"{page['name']}.csv"
-                write_products_to_csv(products, filename)
-                logging.info(f"Saved {len(products)} products to {filename}")
-            except Exception as e:
-                logging.error(f"Failed to process category {page['name']}. Error: {e}")
+    for page in pages:
+        print(f"Processing category: {page['name']} with URL: {page['url']}")
+        try:
+            products = get_all_products_from_category(page["url"])
+            filename = f"{page['name']}.csv"
+            write_products_to_csv(products, filename)
+            logging.info(f"Saved {len(products)} products to {filename}")
+        except Exception as e:
+            logging.error(f"Failed to process category {page['name']}. Error: {e}")
 
 
 def main():
-    get_all_products()
+    with webdriver.Chrome() as driver:
+        set_driver(driver)
+        get_all_products()
 
 
 if __name__ == "__main__":
